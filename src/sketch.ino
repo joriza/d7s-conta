@@ -5,6 +5,10 @@
 #define CLK 3    
 #define DIO 2
 
+// inicializacion dispositivos
+TM1637 Display1(CLK,DIO);
+int8_t Digits[] = {1,2,3,4};
+
 const int pulsadorLuz = 4;
 int EstadoPulsadorLuz = 0;
 int value = 0;
@@ -13,11 +17,9 @@ int cnt = 5;
 int LED = 13 ; int boton = 4 ;
 bool estado = true ;
 bool estado_anterior = true ;
-
-
-// inicializacion dispositivos
-TM1637 Display1(CLK,DIO);
-int8_t Digits[] = {1,2,3,4};
+//
+unsigned long time_ini = millis();
+unsigned long time_fin = time_ini + 1000;
 
 void setup(){  
   Display1.set();
@@ -29,24 +31,9 @@ void setup(){
 }
 
 void loop(){
-  
-  while(cnt<10000){
-    CambiaEstadoLuz();
-    CalculaDigitos(cnt);
-    delay(250);
-    cnt++;
-    
-    //si el contador llegar a maximo vuelve a comenzar
-    if (EstadoPulsadorLuz == HIGH) { //si se presiona el pulsador
-      cnt=cnt+1000;
-    }
-
-    //si el contador llegar a maximo vuelve a comenzar
-    if (cnt > 9999) { 
-      cnt=2;
-    }
-   }
-}
+  CambiaEstadoLuz();
+  ContarTiempo();
+  }
 
 void CalculaDigitos( int Num){
   int8_t Digit0 = Num %10 ;
@@ -68,4 +55,24 @@ void CambiaEstadoLuz(){
           digitalWrite(LED, !digitalRead(LED));
     estado_anterior = estado ;     // Para recordar el ultimo valor
   }
+}
+
+void ContarTiempo(){
+    CalculaDigitos(cnt);
+    if (millis() - time_ini > 1000){
+    cnt++;
+    time_ini = millis();
+    time_fin = time_ini + 1000;
+    }
+    
+    //si se presiona el pulsador
+    EstadoPulsadorLuz = digitalRead(boton);
+    if ( EstadoPulsadorLuz == LOW) {
+      cnt=cnt+1000;
+    }
+
+    //si el contador llegar a maximo vuelve a comenzar
+    if (cnt > 9999) { 
+      cnt=2;
+    }
 }
