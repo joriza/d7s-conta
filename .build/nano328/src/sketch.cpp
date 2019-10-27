@@ -1,7 +1,13 @@
+#include <Arduino.h>
+#include "TM1637.h"
+void setup();
+void loop();
+void CalculaDigitos( int Num);
+#line 1 "src/sketch.ino"
 //https://www.prometec.net/display-con-interface/
 
 
-#include "TM1637.h"
+//#include "TM1637.h"
 #define CLK 3    
 #define DIO 2
 
