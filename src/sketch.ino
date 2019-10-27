@@ -5,6 +5,10 @@
 #define CLK 3    
 #define DIO 2
 
+// inicializacion dispositivos
+TM1637 Display1(CLK,DIO);
+int8_t Digits[] = {1,2,3,4};
+
 const int pulsadorLuz = 4;
 int EstadoPulsadorLuz = 0;
 int value = 0;
@@ -13,11 +17,6 @@ int cnt = 5;
 int LED = 13 ; int boton = 4 ;
 bool estado = true ;
 bool estado_anterior = true ;
-
-
-// inicializacion dispositivos
-TM1637 Display1(CLK,DIO);
-int8_t Digits[] = {1,2,3,4};
 
 void setup(){  
   Display1.set();
