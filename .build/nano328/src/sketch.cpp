@@ -3,6 +3,7 @@
 void setup();
 void loop();
 void CalculaDigitos( int Num);
+void CambiaEstadoLuz();
 #line 1 "src/sketch.ino"
 //https://www.prometec.net/display-con-interface/
 
@@ -11,30 +12,39 @@ void CalculaDigitos( int Num);
 #define CLK 3    
 #define DIO 2
 
-const int pulsadorPin = 4;
-int valorPulsador = 0;
+const int pulsadorLuz = 4;
+int EstadoPulsadorLuz = 0;
 int value = 0;
 int cnt = 5;
+//
+int LED = 13 ; int boton = 4 ;
+bool estado = true ;
+bool estado_anterior = true ;
 
-// inicializacion
+
+// inicializacion dispositivos
 TM1637 Display1(CLK,DIO);
 int8_t Digits[] = {1,2,3,4};
 
 void setup(){  
   Display1.set();
   Display1.init() ;
-  pinMode(pulsadorPin, INPUT);
+  //pinMode(pulsadorLuz, INPUT);
+  pinMode(boton, INPUT_PULLUP);        //Hemos eliminado R3 INPUT_PULLUP
+  pinMode(LED, OUTPUT);
+
 }
 
 void loop(){
+  
   while(cnt<10000){
+    CambiaEstadoLuz();
     CalculaDigitos(cnt);
     delay(250);
     cnt++;
-    valorPulsador = digitalRead(pulsadorPin);
     
     //si el contador llegar a maximo vuelve a comenzar
-    if (valorPulsador == HIGH) { //si se presiona el pulsador
+    if (EstadoPulsadorLuz == HIGH) { //si se presiona el pulsador
       cnt=cnt+1000;
     }
 
@@ -42,7 +52,7 @@ void loop(){
     if (cnt > 9999) { 
       cnt=2;
     }
-  }
+   }
 }
 
 void CalculaDigitos( int Num){
@@ -56,3 +66,13 @@ void CalculaDigitos( int Num){
   Digits[0] = Digit3 ;
   Display1.display(Digits);
    }
+
+void CambiaEstadoLuz(){
+  estado = digitalRead(boton);
+  if (estado != estado_anterior)      //hay cambio : Han pulsado o soltado
+  {
+    if (estado == LOW)            //Al pulsar botón cambiar LED, pero no al soltar
+          digitalWrite(LED, !digitalRead(LED));
+    estado_anterior = estado ;     // Para recordar el ultimo valor
+  }
+}
